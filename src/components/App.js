@@ -2,6 +2,7 @@ import Component from './Component.js';
 import Header from './Header.js';
 import FuturamaList from '../components/FuturamaList.js';
 import api from '../services/futurama-api.js';
+import Loading from './Loading.js';
 
 class App extends Component {
 
@@ -20,12 +21,19 @@ class App extends Component {
         const futuramaList = new FuturamaList({ friends: [] });
         main.appendChild(futuramaList.render());
 
+        //This renders loading page
+        const loading = new Loading({ loading: true });
+        main.appendChild(loading.render());
+
         api.getFriends()
             .then(friends => {
                 futuramaList.update({ friends });
             })
             .catch(err => {
                 console.log(err);
+            })
+            .finally(() => {
+                loading.update({ loading: false });
             });
 
         return dom;
