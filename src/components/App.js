@@ -3,6 +3,7 @@ import Header from './Header.js';
 import FuturamaList from '../components/FuturamaList.js';
 import api from '../services/futurama-api.js';
 import Loading from './Loading.js';
+import ErrorDisplay from './ErrorDisplay.js';
 
 class App extends Component {
 
@@ -22,19 +23,38 @@ class App extends Component {
         main.appendChild(futuramaList.render());
 
         //This renders loading page
-        const loading = new Loading({ loading: true });
+        const loading = new Loading({ loading: false });
         main.appendChild(loading.render());
 
-        api.getFriends()
-            .then(friends => {
-                futuramaList.update({ friends });
-            })
-            .catch(err => {
-                console.log(err);
-            })
-            .finally(() => {
-                loading.update({ loading: false });
-            });
+        const errorDisplay = new ErrorDisplay({ error: '' });
+        main.appendChild(errorDisplay.render());
+
+        function loadFriends() {
+            const params = window.location.hash.slice(1);
+
+            const searchParams = new URLSearchParams(params);
+            const search = searchParams.get('search');
+
+            loading.update({ loading: true });
+
+            api.getFriends(search)
+                .then(friends => {
+                    futuramaList.update({ friends });
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+                .finally(() => {
+                    loading.update({ loading: false });
+                });
+            
+        }
+
+        loadFriends();
+
+        window.addEventListener('hashchange', () => {
+            loadFriends();
+        });
 
         return dom;
     }
