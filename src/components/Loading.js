@@ -10,7 +10,7 @@ class Loading extends Component {
 
         return /*html*/ `
             <div class="loading">
-                <img src="../../assets/futurama-load.gif"
+                <img src="./assets/futurama-load.gif">
             </div>
         `;
     }
